@@ -1,5 +1,6 @@
 package com.example.springtutorial;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,7 +12,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * This class define all the Beans required for the spring security for basic auth.
@@ -19,6 +22,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    JwtFilter jwtFilter;
 
     /**
      * Providing rules for the API to be authenticated.
@@ -29,6 +35,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain basicAuth(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers("/hello")
@@ -36,7 +43,7 @@ public class SecurityConfig {
                                 .requestMatchers("/user/**")
                                     .permitAll()                          //No authentication required
                                         .anyRequest().authenticated())    //Authenticate everything else
-                .httpBasic(Customizer.withDefaults());
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

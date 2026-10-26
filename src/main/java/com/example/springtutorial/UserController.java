@@ -1,6 +1,9 @@
 package com.example.springtutorial;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +20,13 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/encodePassword")
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtService jwtService;
+
+    @PostMapping("/encodePassword")
     public void saveUserWithEncodedPassword(@RequestParam String userName, @RequestParam String password) {
         UserEntity user = new UserEntity();
         user.setUsername(userName);
@@ -25,5 +34,17 @@ public class UserController {
         user.setActive(true);
 
         userRepository.save(user);
+    }
+
+    @PostMapping("/authenticate")
+    public String authenticate(@RequestBody AuthRequest authRequest) {
+        Authentication authenticate = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequest.username(),
+                        authRequest.password()));
+        if (authenticate.isAuthenticated()) {
+            return jwtService.generateJwtToken(authRequest.username());
+        }
+
+        return null;
     }
 }
