@@ -16,15 +16,26 @@ public class UserEntity {
     @Column(name = "username")
     private String username;
 
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+    @Column(name = "role")
+    private String role;
+
+
     public UserEntity(Long id) {
         this.id = id;
     }
 
-    public UserEntity(Long id, String username, String password, Boolean isActive) {
+    public UserEntity(Long id, String username, String password, Boolean isActive, String role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.isActive = isActive;
+        this.role = role;
     }
 
     public UserEntity() {
@@ -46,6 +57,8 @@ public class UserEntity {
         isActive = active;
     }
 
+    public void setRole(String role) { this.role = role; }
+
     public Long getId() {
         return id;
     }
@@ -62,9 +75,7 @@ public class UserEntity {
         return isActive;
     }
 
-    @Column(name = "password")
-    private String password;
+    public String getRole() { return role; }
 
-    @Column(name = "is_active")
-    private Boolean isActive;
+
 }

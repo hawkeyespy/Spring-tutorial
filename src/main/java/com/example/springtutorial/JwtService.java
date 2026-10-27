@@ -15,12 +15,16 @@ public class JwtService {
 
     public static final String SECRET = "MySuperSecretKey123#456@789#(()JIJIOJ*U9908908055645456464!$";
 
-    public String generateJwtToken(String username) {
+    public String generateJwtToken(String username, String role) {
+
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("Role", role);
+
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000*60*30))
-                .addClaims(new HashMap<>())
+                .addClaims(claims)
                 .signWith(getSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

@@ -3,6 +3,7 @@ package com.example.springtutorial;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -42,7 +43,15 @@ public class SecurityConfig {
                                     .permitAll()                          //No authentication required
                                 .requestMatchers("/user/**")
                                     .permitAll()                          //No authentication required
-                                        .anyRequest().authenticated())    //Authenticate everything else
+                                .requestMatchers(HttpMethod.POST, "/rooms")
+                                    //Either of them can be used. hasAuthority("ROLE_ADMIN") or .hasRole("ADMIN")
+                                    //.hasAuthority("ROLE_ADMIN")
+                                    .hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/rooms")
+                                    .hasAnyRole("ADMIN", "STAFF")
+                                .requestMatchers(HttpMethod.GET, "/rooms/**")
+                                    .hasAnyRole("ADMIN", "STAFF", "GUEST")
+                                .anyRequest().authenticated())    //Authenticate everything else
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -27,11 +27,14 @@ public class UserController {
     JwtService jwtService;
 
     @PostMapping("/encodePassword")
-    public void saveUserWithEncodedPassword(@RequestParam String userName, @RequestParam String password) {
+    public void saveUserWithEncodedPassword(@RequestParam String userName,
+                                            @RequestParam String password,
+                                            @RequestParam String role) {
         UserEntity user = new UserEntity();
         user.setUsername(userName);
         user.setPassword(passwordEncoder.encode(password));
         user.setActive(true);
+        user.setRole(role);
 
         userRepository.save(user);
     }
@@ -42,7 +45,13 @@ public class UserController {
                 new UsernamePasswordAuthenticationToken(authRequest.username(),
                         authRequest.password()));
         if (authenticate.isAuthenticated()) {
-            return jwtService.generateJwtToken(authRequest.username());
+            String role = authenticate
+                    .getAuthorities()
+                    .iterator()
+                    .next()
+                    .getAuthority()
+                    .replace("ROLE_", "");
+            return jwtService.generateJwtToken(authRequest.username(), role);
         }
 
         return null;
