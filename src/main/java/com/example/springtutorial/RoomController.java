@@ -1,5 +1,7 @@
 package com.example.springtutorial;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -7,16 +9,20 @@ import org.springframework.web.bind.annotation.*;
 public class RoomController {
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public String addRoom() {
         return "Added new room";
     }
 
     @GetMapping("/{id}")
-    public String getRoom(@PathVariable String id) {
-        return "Room with id: " + id;
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'GUEST')")
+    @PostAuthorize("returnObject.assignedTo == authentication.name")
+    public Room getRoom(@PathVariable Long id) {
+        return new Room(id, "usr");
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String getAllRooms() {
         return "All rooms";
     }
