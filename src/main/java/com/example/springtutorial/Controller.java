@@ -37,7 +37,7 @@ public class Controller {
         // if do not want to access the user from security contect as method parameter,
         // This can be explicitly accessed like below 2 lines of commented code.
         //Authentication authentication = SecurityContextHolder.getContext();
-        //Object user = authentication.getPrincipal();
+        //OAuth2User user = (OAuth2User) authentication.getPrincipal();
 
         Map<String, Object> response = new HashMap<>();
 
