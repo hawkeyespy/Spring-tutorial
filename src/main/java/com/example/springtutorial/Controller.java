@@ -1,0 +1,50 @@
+package com.example.springtutorial;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * To add users in users table in database.
+ * It encodes password while storing password in table.
+ */
+@RestController
+public class Controller {
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "Hello World";
+    }
+
+    @GetMapping("/hi")
+    public String hi() {
+        return "Hi World";
+    }
+
+    @GetMapping("/hey")
+    public String hey() {
+        return "Hey World";
+    }
+
+    @GetMapping("/me")
+    public Map<String, Object> getUser(@AuthenticationPrincipal OAuth2User user) {
+
+        // if do not want to access the user from security contect as method parameter,
+        // This can be explicitly accessed like below 2 lines of commented code.
+        //Authentication authentication = SecurityContextHolder.getContext();
+        //Object user = authentication.getPrincipal();
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("name", user.getAttribute("name"));
+        response.put("email", user.getAttribute("email"));
+        response.put("picture", user.getAttribute("picture"));
+
+        return response;
+    }
+}
