@@ -3,18 +3,15 @@ package com.example.springtutorial;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -23,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity //This annotation is required for @PreAuthorize and @PostAuthorize on methods to work.
 public class SecurityConfig {
 
     @Autowired
@@ -45,14 +42,6 @@ public class SecurityConfig {
                                     .permitAll()                          //No authentication required
                                 .requestMatchers("/user/**")
                                     .permitAll()                          //No authentication required
-//                                .requestMatchers(HttpMethod.POST, "/rooms")
-//                                    //Either of them can be used. hasAuthority("ROLE_ADMIN") or .hasRole("ADMIN")
-//                                    //.hasAuthority("ROLE_ADMIN")
-//                                    .hasRole("ADMIN")
-//                                .requestMatchers(HttpMethod.GET, "/rooms")
-//                                    .hasAnyRole("ADMIN", "STAFF")
-//                                .requestMatchers(HttpMethod.GET, "/rooms/**")
-//                                    .hasAnyRole("ADMIN", "STAFF", "GUEST")
                                 .anyRequest().authenticated())    //Authenticate everything else
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
