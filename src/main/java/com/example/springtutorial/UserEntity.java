@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 /**
  * This class represents users table in database.
+ *
+ * @author Ravi Chandra
  */
 @Entity
 @Table(name = "users")
@@ -23,14 +25,15 @@ public class UserEntity {
     private Boolean isActive;
 
     @Column(name = "role")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 
     public UserEntity(Long id) {
         this.id = id;
     }
 
-    public UserEntity(Long id, String username, String password, Boolean isActive, String role) {
+    public UserEntity(Long id, String username, String password, Boolean isActive, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -57,7 +60,7 @@ public class UserEntity {
         isActive = active;
     }
 
-    public void setRole(String role) { this.role = role; }
+    public void setRole(Role role) { this.role = role; }
 
     public Long getId() {
         return id;
@@ -75,7 +78,7 @@ public class UserEntity {
         return isActive;
     }
 
-    public String getRole() { return role; }
+    public Role getRole() { return role; }
 
 
 }

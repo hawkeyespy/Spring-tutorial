@@ -36,11 +36,22 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // check if the spring security context is null
         if(authToken!=null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            //Getting role information from jwt token
             Claims claims = jwtService.verifySignatureAndExtractAllClaims(authToken);
-            String role = claims.get("Role", String.class);
-            List<SimpleGrantedAuthority> simpleGrantedAuthorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+            //Role from jwt token does not have prefix ROLE, so adding it to build Role enum element
+            Role role = Role.valueOf("ROLE_" + claims.get("Role", String.class));
+
+            // Adding role based authorities by adding role details.
+            List<SimpleGrantedAuthority> simpleGrantedAuthorities =
+                    new java.util.ArrayList<>(List.of(new SimpleGrantedAuthority(role.name())));
+
+            // Adding permission based authority by iterating all the permission current role has.
+            role.getPermissions().forEach(permission ->
+                    simpleGrantedAuthorities.add(new SimpleGrantedAuthority(permission.name())));
 
             if (!jwtService.isTokenExpired(authToken)) {
+                // Adding authorities details to security context.
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                         = new UsernamePasswordAuthenticationToken(claims.getSubject(), null, simpleGrantedAuthorities);
                 // if there are other details with token we can set it to security context

@@ -29,7 +29,7 @@ public class UserController {
     @PostMapping("/encodePassword")
     public void saveUserWithEncodedPassword(@RequestParam String userName,
                                             @RequestParam String password,
-                                            @RequestParam String role) {
+                                            @RequestParam Role role) {
         UserEntity user = new UserEntity();
         user.setUsername(userName);
         user.setPassword(passwordEncoder.encode(password));
