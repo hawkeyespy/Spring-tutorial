@@ -9,8 +9,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-
 /* "UserDetailsService" is a spring security interface which handles the service call on each api call.
    if not used we have to manually call the UserService.getUserByUsername method.
 

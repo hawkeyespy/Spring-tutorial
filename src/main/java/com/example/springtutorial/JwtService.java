@@ -13,6 +13,7 @@ import java.util.HashMap;
 @Service
 public class JwtService {
 
+    //Secret key used to encrypt signature.
     public static final String SECRET = "MySuperSecretKey123#456@789#(()JIJIOJ*U9908908055645456464!$";
 
     public String generateJwtToken(String username, String role) {
